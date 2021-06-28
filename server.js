@@ -1,10 +1,13 @@
 // server.js
 // where your node app starts
 
+
 // init project
 require('dotenv').config();
 var express = require('express');
 var app = express();
+
+let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -25,6 +28,25 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+
+//Request Header Parser Microservice Project
+app.get("/api/whoami", (req, res) => {
+  //get ip from ipify cause I don't know how to
+  //install XMLHttpRequest and require it
+  let ipRequest = new XMLHttpRequest();
+  ipRequest.open("GET", 'https://api.ipify.org?format=json', true);
+  ipRequest.send();
+  ipRequest.onload = () => {
+    let ip = JSON.parse(ipRequest.responseText).ip;
+    let userAgent = req.header("User-Agent");
+    let language = req.header("Accept-Language");
+    res.json({
+      "ipaddress": ip,
+      "language": language,
+      "software": userAgent
+    })
+  }
+})
 
 
 // listen for requests :)
